@@ -1,3 +1,4 @@
+# https://stackoverflow.com/a/45527288/1827854
 from flask import g, redirect
 from flask_appbuilder import IndexView, expose
 
