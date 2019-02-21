@@ -29,7 +29,7 @@ def collect_pkg_data(package, include_py_files=False, subdir=None):
 
     return data_toc
 
-pkg_data = collect_pkg_data('app') + collect_pkg_data('flask_appbuilder')
+pkg_data = collect_pkg_data('webapp') + collect_pkg_data('flask_appbuilder')
 
 block_cipher = None
 
