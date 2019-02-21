@@ -47,7 +47,7 @@ AUTH_TYPE = AUTH_DB
 
 # When using LDAP Auth, setup the ldap server
 #AUTH_LDAP_SERVER = "ldap://ldapserver.new"
-
+"""
 AUTH_LDAP_SERVER = "ldap://ldapserver.local"
 AUTH_LDAP_USE_TLS = False
 AUTH_LDAP_SEARCH = "dc=domain,dc=local"
@@ -55,7 +55,7 @@ AUTH_LDAP_BIND_USER = "CN=Query User,OU=People,dc=domain,dc=local"
 AUTH_LDAP_BIND_PASSWORD = "password"
 AUTH_LDAP_APPEND_DOMAIN = 'somedomain.local'
 AUTH_LDAP_UID_FIELD = "userPrincipalName"
-
+"""
 # Uncomment to setup OpenID providers example for OpenID authentication
 #OPENID_PROVIDERS = [
 #    { 'name': 'Yahoo', 'url': 'https://me.yahoo.com' },
