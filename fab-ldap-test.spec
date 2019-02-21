@@ -36,7 +36,7 @@ block_cipher = None
 xml_imports = ['xml.etree.ElementTree', 'defusedxml.ElementTree']
 sql_imports = ['sqlalchemy.ext.baked']
 
-a = Analysis(['run.py'],
+a = Analysis(['fab-ldap-test.py'],
              pathex=['.'],
              binaries=[],
              datas=[('./config.py', '.'), ('./app.db', '.')],
@@ -57,7 +57,7 @@ exe = EXE(pyz,
           a.datas,
           pkg_data,
           [],
-          name='run',
+          name='fab-ldap-test',
           debug=True,
           bootloader_ignore_signals=False,
           strip=False,
