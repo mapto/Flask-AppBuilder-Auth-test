@@ -10,4 +10,4 @@ For usage options see documentation in [fab-ldap-test.py](https://github.com/map
 
 Requires [python3](https://www.python.org/downloads/). To install further prerequisites, use:
 
-    pip3 install flask-appbuilder python-ldap pyinstaller docopt
+    pip3 install -r requirements.txt
