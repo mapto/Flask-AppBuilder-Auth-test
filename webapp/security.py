@@ -9,10 +9,10 @@ from flask_appbuilder import expose
 from flask_appbuilder._compat import as_unicode
 from flask_appbuilder.security.views import AuthView
 
-from superset.security import SupersetSecurityManager
+from flask_appbuilder.security.sqla.manager import SecurityManager
 
 log = logging.getLogger(__name__)
-
+log.setLevel(logging.DEBUG)
 
 class NoAuthView(AuthView):
     @expose('/login/', methods=['GET', 'POST'])
@@ -29,7 +29,7 @@ class NoAuthView(AuthView):
         login_user(user, remember=True)
         return redirect(self.appbuilder.get_url_for_index)
 
-class NoSecurityManager(SupersetSecurityManager):
+class NoSecurityManager(SecurityManager):
     # authdbview = AuthJWTView
     authdbview = NoAuthView
 
@@ -55,7 +55,7 @@ class BasicAuthView(AuthView):
         login_user(user, remember=True)
         return redirect(self.appbuilder.get_url_for_index)
 
-class BasicAuthSecurityManager(SupersetSecurityManager):
+class BasicAuthSecurityManager(SecurityManager):
     # authdbview = AuthJWTView
     authdbview = BasicAuthView
 
@@ -86,5 +86,5 @@ class AuthJWTView(AuthView):
         login_user(user, remember=True)
         return redirect(self.appbuilder.get_url_for_index)
 
-class JwtSecurityManager(SupersetSecurityManager):
+class JwtSecurityManager(SecurityManager):
     authdbview = AuthJWTView
