@@ -23,6 +23,9 @@ Where ldap_config.py can be replaced with your configuration. The current file a
 For tests with various authorisation paradigms, try respectively:
 
     python fab-getparam-test.py --config ldap_config.py --debug
+    
+or    
+    
     python fab-ldap-test.py --config ldap_config.py --debug
 
 Notice that this configurations also rely on the user being present in LDAP.
