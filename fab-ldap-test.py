@@ -20,20 +20,22 @@ Options:
 For further documentation see README file.
 
 """
-from importlib import import_module
-import sys, os
+import os
+import logging
 
 from docopt import docopt
 
 args = docopt(__doc__)
 
 debug = args['--debug']
+logging.getLogger().setLevel(logging.DEBUG if debug else logging.INFO)
 
 from webapp import create_app
+from webapp.views import LoginIndexView
 
-config_name = os.path.abspath(args['--config'] if args['--config'] else 'db_config.py')
+config_name = os.path.abspath(args['--config']) if args['--config'] else None
 if debug: print("Loading config from: %s"%config_name)
-local_app = create_app(config_name)
+local_app = create_app(config_name=config_name, indexview=LoginIndexView)
 
 from webapp import app
 app = local_app
