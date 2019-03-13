@@ -2,3 +2,4 @@ docopt==0.6.2
 flask-appbuilder==1.12.3
 python-ldap==3.1.0
 pyinstaller==3.4
+pyjwt==1.4.2
