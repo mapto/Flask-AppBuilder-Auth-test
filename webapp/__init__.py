@@ -12,13 +12,16 @@ from .lazyinit import app, db, appbuilder
 logging.basicConfig(format='%(asctime)s:%(levelname)s:%(name)s:%(message)s')
 
 def create_app(config_name=None, indexview=None, security_manager_class=None):
-	app = Flask(__name__)
-	app.config.from_object('config')
-	if config_name:
-		app.config.from_pyfile(config_name)
-	db = SQLA(app)
-	appbuilder = AppBuilder(app, db.session, indexview=indexview, security_manager_class=security_manager_class)
-	return app
+    global app, db, appbuilder
+
+    app = Flask(__name__)
+    app.config.from_object('config')
+    if config_name:
+        app.config.from_pyfile(config_name)
+    db = SQLA(app)
+    appbuilder = AppBuilder(app, db.session, indexview=indexview, security_manager_class=security_manager_class)
+
+    return app
 
 """
 from sqlalchemy.engine import Engine

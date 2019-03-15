@@ -19,21 +19,31 @@ from docopt import docopt
 import logging
 
 from webapp import create_app
-from webapp.security import JwtSecurityManager
+# from webapp.security import JwtSecurityManager
+# from webapp.jwt_auth import JwtSecurityManager
 
 args = docopt(__doc__)
 
 debug = args['--debug']
 logging.getLogger().setLevel(logging.DEBUG if debug else logging.INFO)
+log = logging.getLogger(__name__)
 
 from webapp import create_app
 
 config_name = os.path.abspath(args['--config']) if args['--config'] else None
 if debug: print("Loading config from: %s"%config_name)
-local_app = create_app(config_name=config_name, security_manager_class=JwtSecurityManager)
+# local_app = create_app(config_name=config_name, security_manager_class=JwtSecurityManager)
+local_app = create_app(config_name=config_name)
 
-from webapp import app
+from webapp import app, appbuilder
 app = local_app
+
+log.info("App initialised: %s, builder: %s"%(app, appbuilder))
+@app.before_request
+def parse_jwt():
+    from webapp import jwt_auth
+    return jwt_auth.parse_jwt()
+
 
 app.run(host='0.0.0.0', port=args['--port'], debug=debug)  # pyinstaller one file packaging confuses flask autorestart when debugging
 
