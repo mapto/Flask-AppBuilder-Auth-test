@@ -20,7 +20,7 @@ For LDAP authentication call e.g.
 
 Where ldap_config.py can be replaced with your configuration. The current file assumes LDAP deployment in docker, as in the [KNOX Superset testing](https://github.com/mapto/knox_superset_testing) configuration. The [provided credentials](https://gitbox.apache.org/repos/asf?p=knox.git;a=blob;f=gateway-release/home/conf/users.ldif;h=986704dc40b9cee0a1fa4b3074aa4fb2ee5e11b0;hb=HEAD) can be read from the corresponding configuration file.
 
-For tests with various authorisation paradigms, try respectively:
+For tests with various authorisation paradigms (also reliant on LDAP credentials), try respectively:
 
 ### Login form
 
@@ -48,5 +48,3 @@ Request:
 Start application:
 
     python fab-jwt-test.py --config jwt_config.py --debug
-
-Notice that this configurations also rely on the user being present in LDAP as explained above.
