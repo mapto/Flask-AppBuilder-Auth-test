@@ -1,3 +1,5 @@
+"""Used for before_request"""
+
 from flask import g, redirect, request, flash, session
 from flask_login import login_user
 

@@ -1,3 +1,5 @@
+"""Security Managers and Auth Views defined here"""
+
 import base64
 import logging
 
