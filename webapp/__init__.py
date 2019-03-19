@@ -3,6 +3,8 @@ import logging
 from flask import Flask
 from flask_appbuilder import SQLA, AppBuilder
 
+from werkzeug.contrib.fixers import ProxyFix
+
 from .lazyinit import app, db, appbuilder
 
 """
@@ -15,6 +17,7 @@ def create_app(config_name=None, indexview=None, security_manager_class=None):
     global app, db, appbuilder
 
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
     app.config.from_object('config')
     if config_name:
         app.config.from_pyfile(config_name)

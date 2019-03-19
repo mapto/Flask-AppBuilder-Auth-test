@@ -9,7 +9,7 @@ from flask_appbuilder import expose
 from flask_appbuilder.forms import DynamicForm
 from flask_appbuilder.security.forms import LoginForm_db
 from flask_appbuilder._compat import as_unicode
-from flask_appbuilder.security.views import AuthView
+from flask_appbuilder.security.views import AuthLDAPView
 
 from flask_appbuilder.security.sqla.manager import SecurityManager
 
@@ -134,7 +134,9 @@ class BasicAuthView(AuthLDAPView):
 class BasicAuthSecurityManager(SecurityManager):
     # authdbview = AuthJWTView
     authldapview = BasicAuthView
+"""
 
+from .jwt_auth import parse_jwt
 
 class AuthJWTView(AuthLDAPView):
     def _get_jwt_username(self, token):
@@ -147,18 +149,82 @@ class AuthJWTView(AuthLDAPView):
 
     @expose('/login/', methods=['GET', 'POST'])
     def login(self):
+        return parse_jwt()
+
+class JwtSecurityManager(SecurityManager):
+    authldapview = AuthJWTView
+
+"""
+
+jks_file = "/etc/ssl/keystores/gateway.jks"
+# from .config import SECRET_KEY as master_secret
+master_secret = 'knox'
+
+class AuthJWTView(AuthLDAPView):
+    jwt_key = "hadoop-jwt="
+
+    def _get_jwt_username(self, token):
+        import jwt
+        from crypto import open_jks
+
+        SECRET_KEY = open_jks(jks_file, master_secret)
+        # from config import SECRET_KEY # use jks.
+
+        log.info("Secret is %s"%(SECRET_KEY))
+        contents = jwt.decode(token, SECRET_KEY)
+        username = contents['sub']
+        log.info("Username %s"%(username))
+        return username
+
+    def _get_jwt_token(self, cookie_header):
+
+        for c in cookie_header.split(";"):
+            cookie = c.strip()
+            if cookie.startswith(self.jwt_key):
+                jwt_token = cookie.strip()[len(self.jwt_key):]
+                return jwt_token
+        return None
+
+    def parse_jwt(self):
+        """to be used with flask's @app.before_request"""
+
         if g.user is not None and g.user.is_authenticated:
-            log.info("User is already authenticated: %s"%g.user)
-            return redirect(self.appbuilder.get_url_for_index)
+            log.info("Already authenticated: %s"%g.user)
+            return None
 
         log.info("Cookies: %s"%request.headers["Cookie"])
-        jwt_key = "hadoop-jwt="
-        jwt_token = [t[len(jwt_key):] for c in request.headers["Cookie"].split(";") if c.strip().startswith(jwt_key)][0]
+        jwt_token = self._get_jwt_token(request.headers["Cookie"])
         log.info("Token: %s"%jwt_token)
+        if not jwt_token:
+            log.info("Failed parsing token")
+            return "Failed"
         username = self._get_jwt_username(jwt_token)
         log.info("Username %s"%username)
         user = self.appbuilder.sm.find_user(username)
         if not user:
+            log.info("Authentication failed: %s"%user)
+            return "Failed"
+        login_user(user, remember=True)
+        return None
+
+    @expose('/login/', methods=['GET', 'POST'])
+    def login(self):
+        if g.user is not None and g.user.is_authenticated:
+            log.info("Already authenticated: %s"%g.user)
+            return redirect(self.appbuilder.get_url_for_index)
+
+        log.info("Cookies: %s"%request.headers["Cookie"])
+        jwt_token = self._get_jwt_token(request.headers["Cookie"])
+        log.info("Token: %s"%jwt_token)
+        if not jwt_token:
+            log.info("Failed parsing token")
+            flash(as_unicode(self.invalid_login_message), 'warning')
+            return redirect(self.appbuilder.get_url_for_login)
+        username = self._get_jwt_username(jwt_token)
+        log.info("Username %s"%username)
+        user = self.appbuilder.sm.find_user(username)
+        if not user:
+            log.info("Authentication failed: %s"%user)
             flash(as_unicode(self.invalid_login_message), 'warning')
             return redirect(self.appbuilder.get_url_for_login)
         login_user(user, remember=True)
